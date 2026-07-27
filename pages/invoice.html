@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice — ShopEase</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+
+    @media print {
+      .site-header,
+      .site-footer,
+      .invoice-actions,
+      .success-banner {
+        display: none !important;
+      }
+
+      body {
+        background: #fff !important;
+        margin: 0;
+        padding: 0;
+      }
+
+      main.container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .invoice-box {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .invoice-table th,
+      .invoice-table td {
+        border-bottom: 1px solid #ccc;
+      }
+
+      .invoice-total-row {
+        border-top: 2px solid #333;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">🛍️ Shop<span>Ease</span></a>
+      <nav class="main-nav">
+        <a href="../index.html">Home</a>
+        <a href="cart.html" class="cart-link">
+          Cart
+          <span class="cart-badge" data-cart-badge>0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="mainContent">
+    <!-- filled by invoice.js -->
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 ShopEase — School Project Demo (HTML + CSS + JavaScript)</p>
+    </div>
+  </footer>
+
+  <script src="../js/products.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/invoice.js"></script>
+</body>
+</html>

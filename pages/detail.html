@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Detail — ShopEase</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">🛍️ Shop<span>Ease</span></a>
+      <nav class="main-nav">
+        <a href="../index.html">Home</a>
+        <a href="cart.html" class="cart-link">
+          Cart
+          <span class="cart-badge" data-cart-badge>0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="mainContent">
+    <!-- filled in by JavaScript -->
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 ShopEase — School Project Demo (HTML + CSS + JavaScript)</p>
+    </div>
+  </footer>
+
+  <script src="../js/products.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+
+    const productId = parseInt(getParam("id"), 10);
+    const product = PRODUCTS.find((p) => p.id === productId);
+    const main = document.getElementById("mainContent");
+
+    if (!product) {
+      main.innerHTML = `
+        <div class="empty-state">
+          <h1>Product not found</h1>
+          <a href="../index.html">Back to catalog</a>
+        </div>`;
+    } else {
+      document.title = product.name + " — ShopEase";
+
+      const related = PRODUCTS.filter(
+        (p) => p.category === product.category && p.id !== product.id
+      ).slice(0, 4);
+
+      main.innerHTML = `
+        <a href="../index.html" style="color: var(--muted); font-size: 0.9rem;">&larr; Back to catalog</a>
+
+        <div class="detail-wrap" style="margin-top: 18px;">
+          <div class="detail-thumb">
+            <img src="${product.image}" alt="${product.name}" />
+          </div>
+
+          <div class="detail-info">
+            <div class="product-category">${product.category}</div>
+            <h1>${product.name}</h1>
+            <div class="detail-price">$${product.price.toFixed(2)}</div>
+            <span class="stock-tag">${product.stock} in stock</span>
+            <p class="detail-desc">${product.description}</p>
+
+            <div class="qty-row">
+              <label for="qty">Quantity:</label>
+              <input type="number" id="qty" value="1" min="1" max="${product.stock}" />
+            </div>
+            <button class="btn btn-primary" id="addBtn">Add to Cart</button>
+            <a href="cart.html" class="btn btn-outline">View Cart</a>
+          </div>
+        </div>
+
+        ${
+          related.length > 0
+            ? `
+        <div class="related-section">
+          <h2>You may also like</h2>
+          <div class="product-grid">
+            ${related
+              .map(
+                (p) => `
+              <div class="product-card">
+                <a href="detail.html?id=${p.id}" class="product-thumb">
+                  <img src="${p.image}" alt="${p.name}" loading="lazy" />
+                </a>
+                <div class="product-card-body">
+                  <a href="detail.html?id=${p.id}" class="product-name">${p.name}</a>
+                  <div class="product-price">$${p.price.toFixed(2)}</div>
+                </div>
+              </div>`
+              )
+              .join("")}
+          </div>
+        </div>`
+            : ""
+        }
+      `;
+
+      document.getElementById("addBtn").addEventListener("click", () => {
+        const qty = document.getElementById("qty").value;
+        addToCart(product.id, qty);
+        refreshCartBadge();
+        alert(`Added ${qty} x ${product.name} to your cart!`);
+      });
+    }
+  </script>
+</body>
+</html>

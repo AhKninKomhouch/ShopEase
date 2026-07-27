@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopEase — Catalog</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">🛍️ Shop<span>Ease</span></a>
+      <nav class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="pages/cart.html" class="cart-link">
+          Cart
+          <span class="cart-badge" data-cart-badge>0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Our Products</h1>
+    <p class="page-subtitle">សូមជ្រើសរើសទំនិញដែលអ្នកចង់ទិញនិង បញ្ជាទិញដាក់ក្នុងកន្រ្តកទំនិញ...</p>
+
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="Search products..." />
+      <div id="categoryChips"></div>
+    </div>
+
+    <div class="product-grid" id="productGrid"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 ShopEase — Copyright by Try Sophou. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    let activeCategory = "";
+    let searchQuery = "";
+
+    function renderCategoryChips() {
+      const categories = [...new Set(PRODUCTS.map((p) => p.category))];
+      const wrap = document.getElementById("categoryChips");
+      wrap.innerHTML = "";
+
+      const allChip = document.createElement("span");
+      allChip.className = "chip" + (activeCategory === "" ? " active" : "");
+      allChip.textContent = "All";
+      allChip.onclick = () => { activeCategory = ""; renderCategoryChips(); renderProducts(); };
+      wrap.appendChild(allChip);
+
+      categories.forEach((cat) => {
+        const chip = document.createElement("span");
+        chip.className = "chip" + (activeCategory === cat ? " active" : "");
+        chip.textContent = cat;
+        chip.onclick = () => { activeCategory = cat; renderCategoryChips(); renderProducts(); };
+        wrap.appendChild(chip);
+      });
+    }
+
+    function renderProducts() {
+      let filtered = PRODUCTS;
+      if (activeCategory) {
+        filtered = filtered.filter((p) => p.category === activeCategory);
+      }
+      if (searchQuery) {
+        filtered = filtered.filter((p) =>
+          p.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+
+      const grid = document.getElementById("productGrid");
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">
+          <p>No products match your search.</p>
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered
+        .map(
+          (p) => `
+        <div class="product-card">
+          <a href="pages/detail.html?id=${p.id}" class="product-thumb">
+            <img src="${p.image}" alt="${p.name}" loading="lazy" />
+          </a>
+          <div class="product-card-body">
+            <a href="pages/detail.html?id=${p.id}" class="product-name">${p.name}</a>
+            <div class="product-category">${p.category}</div>
+            <div class="product-price">$${p.price.toFixed(2)}</div>
+            <button class="btn btn-primary btn-block mt-auto" onclick="quickAdd(${p.id})">Add to Cart</button>
+          </div>
+        </div>`
+        )
+        .join("");
+    }
+
+    function quickAdd(id) {
+      addToCart(id, 1);
+      refreshCartBadge();
+    }
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderProducts();
+    });
+
+    renderCategoryChips();
+    renderProducts();
+  </script>
+</body>
+</html>
